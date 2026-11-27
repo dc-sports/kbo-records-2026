@@ -206,7 +206,20 @@ section.sec{margin-top:36px}
 .pc{--tc:var(--navy);--tc2:var(--gold)}
 .pc .ph{background:linear-gradient(120deg,color-mix(in srgb,var(--tc) 72%,#000),var(--tc));border-bottom:4px solid var(--tc2)}
 .pc .st .r.t{background:color-mix(in srgb,var(--tc) 12%,#fff);color:var(--tc)}
+.cmp table{table-layout:fixed}
+.cmp th:first-child,.cmp td:first-child{width:86px}
+.cmp th.pl{text-align:center;vertical-align:top;white-space:normal;line-height:1.3}
+.cmp th.pl b{display:block;font-size:14.5px;color:var(--ink)}
+.cmp th.pl .te{justify-content:center;font-size:11.5px;color:var(--sub);margin-top:2px}
+.cmp td{text-align:center}
+.cmp .bar{width:100%;max-width:140px;margin:5px auto 0}
+.cmp .bar i{opacity:.75}
 @media (max-width:760px){
+.cin{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.cin input{padding:9px 8px;font-size:13px}
+.cmp table{font-size:13px}.cmp th,.cmp td{padding:8px 5px}
+.cmp th:first-child,.cmp td:first-child{width:50px;padding-left:10px}
+.cmp th.pl b{font-size:13px}.cmp th.pl .te{font-size:10.5px}.cmp th.pl .te img{height:13px}
+.cmp td.best:before{font-size:8px}
 .hero{grid-template-columns:1fr;gap:22px;padding:28px 18px 22px;border-radius:0 0 16px 16px;margin:0 -20px}
 .hero h1{font-size:30px}.hero p{font-size:14px}
 .mandu img{width:56px}.bub{white-space:normal;font-size:12.5px;margin-bottom:22px}
@@ -401,13 +414,13 @@ function drawRank(){const t=T[TY];const key=$('#r-sort').value||t.sort[0][0];con
 for(const s of ['#r-team','#r-sort','#r-n','#r-qual'])$(s).addEventListener('change',drawRank);
 
 function drawCmp(){const t=T[TY];const ids=[...new Set([...document.querySelectorAll('.ci')].map(x=>{const v=x.value.trim();if(t.rows.some(r=>r.id===v))return v;const m=t.rows.filter(r=>r['선수']===v);return m.length===1?m[0].id:null}).filter(Boolean))];
- const hr=el('tr');hr.append(el('th','tl','항목'));ids.forEach(i=>hr.append(el('th','pl',i)));$('#c-head').replaceChildren(hr);
+ const hr=el('tr');hr.append(el('th','tl','항목'));ids.forEach(i=>{const r=t.rows.find(x=>x.id===i);const th=el('th','pl');const tc=TC[r['팀']];if(tc)th.style.borderTop='4px solid '+tc[0];th.append(el('b',null,r['선수']),te(r['팀']));hr.append(th)});$('#c-head').replaceChildren(hr);
  const body=$('#c-body');body.replaceChildren();if(!ids.length){const tr=el('tr');tr.append(el('td','tl','비교할 선수를 입력해 주세요.'));body.append(tr);return}
  const rs=ids.map(i=>t.rows.find(r=>r.id===i));
  for(const [k,l] of t.card){const tr=el('tr');tr.append(el('td','tl tmc',l));const vals=rs.map(r=>r[nk(k)]);const mx=Math.max(...vals.map(Math.abs))||1;
   const best=rs.length>1&&k!=='G'&&k!=='PA'?(t.low[k]?Math.min(...vals):Math.max(...vals)):null;
   rs.forEach((r,i)=>{const isB=best!=null&&vals[i]===best&&vals.filter(v=>v===best).length<rs.length;const td=el('td',isB?'best':null,fmt(k,r[k]));
-   if(!t.low[k]&&k!=='G'&&k!=='PA'){const bar=el('div','bar');const bi=el('i');bi.style.width=Math.round(vals[i]/mx*100)+'%';bar.append(bi);td.append(bar)}tr.append(td)});body.append(tr)}}
+   if(!t.low[k]&&k!=='G'&&k!=='PA'){const bar=el('div','bar');const bi=el('i');bi.style.width=Math.round(vals[i]/mx*100)+'%';bi.style.background=(TC[r['팀']]||[])[0]||'';bar.append(bi);td.append(bar)}tr.append(td)});body.append(tr)}}
 document.querySelectorAll('.ci').forEach(x=>x.addEventListener('change',drawCmp));
 
 // ---- 역대 기록 ----
